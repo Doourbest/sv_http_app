@@ -2,8 +2,8 @@
 
 cd $(dirname ${BASH_SOURCE[0]})
 
-appHome=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
-appName=$(basename "$appHome")
+appSrcDir=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
+appName=$(basename "$appSrcDir")
 
 # build server
 echo "go build -o bin/$appName"
