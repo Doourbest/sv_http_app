@@ -1,0 +1,6 @@
+{
+    "Listen": ":12306"
+    , "AutoRestart" : true
+    , "AutoBuild" : true
+    , "GinMode" : "debug"
+}
