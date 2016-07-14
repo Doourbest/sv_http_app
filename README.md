@@ -2,10 +2,9 @@
 
 ## 特性
 
-- 标准化包目录结构，自动生成用于一键部署的 RPM 包
-- 支持自动安装 crontab
-- 支持进程异常退出监控和自动重新拉起异常退出的进程
-- 模板默认使用 [gin web 框架](https://github.com/gin-gonic/gin) 并封装了 [go-sv 库](http://gitlab.valsun.cn/mayuanpeng/go-sv) 实现 HTTP Server 平滑重启，自动重启（可选），自动编译代码（可选）的功能。
+- 标准化包目录结构，自动生成用于一键部署的 RPM 包并自动更新 crontab 配置
+- 支持进程异常退出监控，自动重新拉起异常退出的进程
+- 模板基于 [sv 框架](https://github.com/Doourbest/sv)，支持平滑重启，自动重启，自动重新编译代码的功能。
 
 
 ## 使用
