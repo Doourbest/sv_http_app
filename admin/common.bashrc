@@ -134,7 +134,8 @@ function start_process() {
 
 	echo "starting..." 1>&2
 
-	local exe="$(get_exe)"
+	local exe
+	exe="$(get_exe)"
 	if [[ $? == 1 ]]
 	then
 		echo "start failed: cannot find application executable" 1>&2
