@@ -16,6 +16,7 @@ then
 fi
 
 function start_process() {
+
     expectedExe="$(readlink -f "${appHome}/bin/${appName}")"
     expectedExe2="$(readlink -f "${appHome}/${appName}")"
     if [ -f "$expectedExe" ]
@@ -29,7 +30,8 @@ function start_process() {
         exit 3
     fi
 
-    nohup $exe -pid_file=${appHome}/data/${appName}.pid 1>>$appHome/log/default.log 2>>$appHome/log/default.log &
+	echo "starting ..."
+    nohup $exe serve -pid_file=${appHome}/data/${appName}.pid 1>>$appHome/log/default.log 2>>$appHome/log/default.log &
     disown
 }
 

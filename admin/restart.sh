@@ -17,7 +17,7 @@ fi
 
 if [[ -z "$pid" ]]
 then
-    echo "App Process not exist, starting it now..." 1>&2
+    echo "NOTICE: App Process not exist" 1>&2
     ${appHome}/admin/start.sh
 else
 
