@@ -170,7 +170,7 @@ function start_process() {
     disown
 	
 	local cnt=0
-	local cntMax=30
+	local cntMax=6
 	while [ $cnt -lt $cntMax ]
 	do
 		if [ "$(get_process_pid)" == "$newPid" ]
@@ -185,7 +185,10 @@ function start_process() {
 				echo "start failed!" 1>&2
 				break
 			fi
+		else
+			usleep 100000
 		fi
+		let cnt=$(($cnt+1))
 	done
 	echo "start failed!" 1>&2
 
