@@ -42,5 +42,5 @@ then
 fi
 
 
-rpmbuild -bb --define="app_source_dir $(pwd)" --define="app_name $appName" ./package/build.spec
+rpmbuild -bb --define="app_source_dir $(pwd)" --define="app_name $appName" ./package/rpm.spec
 

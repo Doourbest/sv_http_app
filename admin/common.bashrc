@@ -35,12 +35,12 @@ function get_process_pid() {
 		return 3
 	fi
 
-	local linkExe="$(readlink /proc/$pid/exe)"
-	local linkExe="${linkExe% (deleted)}"
+	local linkExe="$(readlink /proc/$pid/exe | sed  's/\(;[0-9a-fA-F]*\s+\)\?\s\+(deleted)$//')"
 
 	local expectedExe="$(readlink -f "${g_appHome}/bin/${g_appName}")"
 	local expectedExe2="$(readlink -f "${g_appHome}/${g_appName}")"
 
+	# echo "[$linkExe] [$expectedExe] [$expectedExe2]" 1>&2
 	if [ "$linkExe" == "$expectedExe" -o "$linkExe" == "$expectedExe2" ]
 	then
 		echo "$pid"
@@ -49,6 +49,65 @@ function get_process_pid() {
 		return 3
 	fi
 }
+
+function graceful_restart_process() {
+
+	echo "graceful restarting..." 1>&2
+
+	local pid
+	local stat
+	pid=$(get_process_pid)
+	stat=$?
+	# echo "pid:[$pid] stat[$stat]" 1>&2
+
+	# pid file should be writable
+	if [ -f $g_pidFile -a ! -w $g_pidFile ]
+	then
+		echo "graceful restart failed: pid file [$g_pidFile] is not writable" 1>&2
+		return 1
+	fi
+
+	if [[ "$stat" == 1 ]]
+	then
+		echo "graceful restart failed: cannot detect process status" 1>&2
+		return 1
+	elif [[ "$stat" == 2 ]]
+	then
+		echo "graceful restart failed: process has stopped" 1>&2
+		return 2
+	elif [[ "$stat" == 3 ]]
+	then
+		echo "graceful restart failed: process has terminated unexpectedly" 1>&2
+		return 2
+	fi
+
+	kill -s SIGHUP "$pid"
+	if [[ $? != 0 ]]
+	then
+		echo "graceful restart failed: kill -s SIGHUP "$pid"" 1>&2
+		return 1
+	fi
+
+	local cnt=0
+	local cntMax=30
+	while [[ $cnt -lt $cntMax ]]
+	do
+		usleep 100000
+		local newpid
+		newpid=$(get_process_pid)
+		if [[ "$newpid" != "$pid" ]]
+		then
+			echo "graceful restart ok, new pid $newpid" 1>&2
+			return 0
+		fi
+		cnt=$((cnt+1))
+	done
+	# check stop result
+
+	echo "graceful restart [$pid] failed" 1>&2
+	return 1
+}
+
 
 # return 1, unexpected error
 function stop_process() {

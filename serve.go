@@ -19,9 +19,6 @@ func (this*App) CmdServe(options struct{
 	Server serveConf `src:"conf/server.toml"`
 }) {
 
-	if len(options.Flag_pid_file)>0 {
-		sv.AppWritePidFile(options.Flag_pid_file)
-	}
 
 	conf := &options.Server
 	gin.SetMode(conf.GinMode)
@@ -32,7 +29,13 @@ func (this*App) CmdServe(options struct{
 
 	sv.GraceOptions.AutoRestart = conf.AutoRestart
 	sv.GraceOptions.AutoBuild   = conf.AutoBuild
-	if err:=sv.GraceListenAndServe(conf.Listen, r); err!=nil {
+	// write pid file before begin
+	beforeBegin := func(addr string) {
+		if len(options.Flag_pid_file)>0 {
+			sv.AppWritePidFile(options.Flag_pid_file)
+		}
+	}
+	if err:=sv.GraceListenAndServe(conf.Listen, r, beforeBegin); err!=nil {
 		sv.Log.Info("serve error.", err)
 	}
 }
